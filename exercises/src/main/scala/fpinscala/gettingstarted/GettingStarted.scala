@@ -174,8 +174,9 @@ object PolymorphicFunctions {
 
   // Exercise 3: Implement `partial1`.
 
-  def partial1[A, B, C](a: A, f: (A, B) ⇒ C): B ⇒ C =
-    ???
+  def partial1[A, B, C](a: A, f: (A, B) ⇒ C): B ⇒ C = f(a, _)
+
+  def add1 = partial1(1, (a: Int, b: Int) ⇒ a + b)
 
   // Exercise 4: Implement `curry`.
 
