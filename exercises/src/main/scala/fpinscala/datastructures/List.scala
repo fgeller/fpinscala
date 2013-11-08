@@ -53,7 +53,21 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def setHead[A](l: List[A])(h: A): List[A] = sys.error("todo")
 
-  def drop[A](l: List[A], n: Int): List[A] = sys.error("todo")
+  def drop[A](l: List[A], n: Int): List[A] = {
+    @annotation.tailrec
+    def loop(remainder: List[A], count: Int): List[A] =
+      if (count == 0) remainder
+      else loop(tail(remainder), count - 1)
+
+    loop(l, n)
+  }
+
+  def testDrop(): Unit = {
+    assert(List(1, 2, 3) == drop(List(1, 2, 3), 0), s"drop(0) should not modify the list")
+    assert(List(2, 3) == drop(List(1, 2, 3), 1), s"drop(1) should drop 1")
+    assert(List(3) == drop(List(1, 2, 3), 2), s"drop(2) should drop 2")
+    assert(List() == drop(List(1, 2, 3), 3), s"drop(3) should drop all elements")
+  }
 
   def dropWhile[A](l: List[A], f: A ⇒ Boolean): List[A] = sys.error("todo")
 
