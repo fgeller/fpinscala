@@ -237,4 +237,16 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(List(1, 1) == ffilter(List(1, 2, 1, 2))(_ == 1))
   }
 
+  def zipWith[A, B, C](l1: List[A], l2: List[B])(f: (A, B) ⇒ C): List[C] =
+    (l1, l2) match {
+      case (Nil, Nil)                   ⇒ Nil
+      case (Cons(h1, t1), Cons(h2, t2)) ⇒ Cons(f(h1, h2), zipWith(t1, t2)(f))
+    }
+
+  def addLists(l1: List[Int], l2: List[Int]): List[Int] = zipWith(l1, l2)(_ + _)
+
+  def testAddLists(): Unit = {
+    assert(List() == addLists(List(), List()))
+    assert(List(2, 4, 6) == addLists(List(1, 2, 3), List(1, 2, 3)))
+  }
 }
