@@ -212,4 +212,15 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(List() == filter(List(2))(_ == 1))
     assert(List(1, 1) == filter(List(1, 2, 1, 2))(_ == 1))
   }
+
+  def flatMap[A, B](l: List[A])(f: A ⇒ List[B]): List[B] =
+    foldRight(l, Nil: List[B]) { (a, b) ⇒
+      append(f(a), b)
+    }
+
+  def testFlatMap(): Unit = {
+    assert(List() == flatMap(List())(a ⇒ List(a)))
+    assert(List(2) == flatMap(List(1))(a ⇒ List(a + 1)))
+    assert(List(2, 3) == flatMap(List(1, 2))(a ⇒ List(a + 1)))
+  }
 }
