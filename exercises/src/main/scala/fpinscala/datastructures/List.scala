@@ -92,7 +92,18 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(List() == dropWhile(List(1, 2, 3))(_ < 4), s"dropWhile should drop while predicate is fulfilled 3")
   }
 
-  def init[A](l: List[A]): List[A] = sys.error("todo")
+  def init[A](l: List[A]): List[A] = l match {
+    case Cons(_, Nil) ⇒ Nil
+    case Cons(h, t)   ⇒ Cons(h, init(t))
+    case Nil          ⇒ throw new UnsupportedOperationException("init of empty list")
+  }
+
+  def testInit(): Unit = {
+    assert(List(1, 2) == init(List(1, 2, 3)))
+    assert(List(1) == init(List(1, 2)))
+    assert(List() == init(List(1)))
+    assert(try { init(List()) == ??? } catch { case ex: UnsupportedOperationException ⇒ true })
+  }
 
   def length[A](l: List[A]): Int = sys.error("todo")
 
