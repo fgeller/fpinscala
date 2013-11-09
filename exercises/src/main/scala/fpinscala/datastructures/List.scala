@@ -158,5 +158,14 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(append(List(1, 3), List(2, 4)) == fappend(List(1, 3), List(2, 4)))
   }
 
+  def concat[A](a1: List[List[A]]): List[A] =
+    foldLeft(a1, Nil: List[A])(append)
+
+  def testConcat(): Unit = {
+    assert(concat(List(List(), List())) == List())
+    assert(concat(List(List(1), List(2))) == List(1, 2))
+    assert(concat(List(List(1, 3), List(2, 4))) == List(1, 3, 2, 4))
+  }
+
   def map[A, B](l: List[A])(f: A ⇒ B): List[B] = sys.error("todo")
 }
