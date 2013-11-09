@@ -223,4 +223,18 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(List(2) == flatMap(List(1))(a ⇒ List(a + 1)))
     assert(List(2, 3) == flatMap(List(1, 2))(a ⇒ List(a + 1)))
   }
+
+  def ffilter[A](l: List[A])(f: A ⇒ Boolean): List[A] =
+    flatMap(l) { a ⇒
+      if (f(a)) List(a)
+      else Nil
+    }
+
+  def testFFilter(): Unit = {
+    assert(List() == ffilter(List())(_ == 1))
+    assert(List(1) == ffilter(List(1))(_ == 1))
+    assert(List() == ffilter(List(2))(_ == 1))
+    assert(List(1, 1) == ffilter(List(1, 2, 1, 2))(_ == 1))
+  }
+
 }
