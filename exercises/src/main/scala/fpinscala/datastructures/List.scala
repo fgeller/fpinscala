@@ -69,7 +69,20 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(List() == drop(List(1, 2, 3), 3), s"drop(3) should drop all elements")
   }
 
-  def dropWhile[A](l: List[A], f: A ⇒ Boolean): List[A] = sys.error("todo")
+  @annotation.tailrec
+  def dropWhile[A](l: List[A], f: A ⇒ Boolean): List[A] =
+    l match {
+      case Nil                 ⇒ Nil
+      case Cons(h, _) if !f(h) ⇒ l
+      case Cons(_, t)          ⇒ dropWhile(t, f)
+    }
+
+  def testDropWhile(): Unit = {
+    assert(List(1, 2, 3) == dropWhile(List(1, 2, 3), { a: Int ⇒ a < 1 }), s"dropWhile should not drop if the head does not match the given predicate")
+    assert(List(2, 3) == dropWhile(List(1, 2, 3), { a: Int ⇒ a < 2 }), s"dropWhile should drop while predicate is fulfilled 1")
+    assert(List(3) == dropWhile(List(1, 2, 3), { a: Int ⇒ a < 3 }), s"dropWhile should drop while predicate is fulfilled 2")
+    assert(List() == dropWhile(List(1, 2, 3), { a: Int ⇒ a < 4 }), s"dropWhile should drop while predicate is fulfilled 3")
+  }
 
   def init[A](l: List[A]): List[A] = sys.error("todo")
 
