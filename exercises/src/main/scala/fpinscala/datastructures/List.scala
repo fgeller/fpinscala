@@ -126,5 +126,15 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(foldRight(List(1, 2), 0)((_, acc) ⇒ acc + 1) == foldLeft(List(1, 2), 0)((acc, _) ⇒ acc + 1))
   }
 
+  def fsum[A](l: List[Int]) = foldLeft(l, 0)(_ + _)
+  def fproduct[A](l: List[Int]) = foldLeft(l, 1)(_ * _)
+  def flength[A](l: List[A]) = foldLeft(l, 0)((acc, _) ⇒ acc + 1)
+
+  def testSumProductLength(): Unit = {
+    assert(sum(List(1, 2, 4)) == fsum(List(1, 2, 4)))
+    assert(product(List(1, 2, 4)) == fproduct(List(1, 2, 4)))
+    assert(length(List(1, 2, 4)) == flength(List(1, 2, 4)))
+  }
+
   def map[A, B](l: List[A])(f: A ⇒ B): List[B] = sys.error("todo")
 }
