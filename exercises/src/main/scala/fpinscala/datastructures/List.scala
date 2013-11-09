@@ -51,7 +51,15 @@ object List { // `List` companion object. Contains functions for creating and wo
     case _          ⇒ throw new UnsupportedOperationException("tail of empty list")
   }
 
-  def setHead[A](l: List[A])(h: A): List[A] = sys.error("todo")
+  def setHead[A](l: List[A])(h: A): List[A] = l match {
+    case Cons(_, t) ⇒ Cons(h, t)
+    case Nil        ⇒ Nil
+  }
+
+  def testSetHead(): Unit = {
+    assert(List(3, 2, 3) == setHead(List(1, 2, 3))(3))
+    assert(List() == setHead(List())(3))
+  }
 
   def drop[A](l: List[A], n: Int): List[A] = {
     @annotation.tailrec
