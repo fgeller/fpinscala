@@ -136,5 +136,12 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(length(List(1, 2, 4)) == flength(List(1, 2, 4)))
   }
 
+  def reverse[A](l: List[A]) = foldLeft(l, Nil: List[A])((acc, a) ⇒ Cons(a, acc))
+
+  def testReverse(): Unit = {
+    assert(List(3, 2, 1) == reverse(List(1, 2, 3)))
+    assert(List() == reverse(List()))
+  }
+
   def map[A, B](l: List[A])(f: A ⇒ B): List[B] = sys.error("todo")
 }
