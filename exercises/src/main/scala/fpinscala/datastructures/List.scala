@@ -143,5 +143,11 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(List() == reverse(List()))
   }
 
+  def foldLeftR[A, B](l: List[A], z: B)(f: (B, A) ⇒ B) =
+    (foldRight(l, { id: B ⇒ id }) { (a: A, acc: B ⇒ B) ⇒ { b ⇒ f(acc(b), a) } })(z)
+
+  def foldRightR[A, B](l: List[A], z: B)(f: (A, B) ⇒ B) =
+    (foldLeft(l, { id: B ⇒ id }) { (acc: B ⇒ B, a: A) ⇒ { b ⇒ f(a, acc(b)) } })(z)
+
   def map[A, B](l: List[A])(f: A ⇒ B): List[B] = sys.error("todo")
 }
