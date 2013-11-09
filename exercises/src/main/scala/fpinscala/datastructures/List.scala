@@ -105,7 +105,14 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(try { init(List()) == ??? } catch { case ex: UnsupportedOperationException ⇒ true })
   }
 
-  def length[A](l: List[A]): Int = sys.error("todo")
+  def length[A](l: List[A]): Int = foldRight(l, 0)((_, acc) ⇒ acc + 1)
+
+  def testLength(): Unit = {
+    assert(0 == length(List()))
+    assert(1 == length(List(1)))
+    assert(2 == length(List(1, 2)))
+    assert(3 == length(List(1, 2, 3)))
+  }
 
   def foldLeft[A, B](l: List[A], z: B)(f: (B, A) ⇒ B): B = sys.error("todo")
 
