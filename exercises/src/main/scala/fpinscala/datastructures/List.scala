@@ -199,4 +199,17 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(List("2.0") == map(List(2.0d))(_.toString))
     assert(List("1.0", "1.0", "2.0") == map(List(1d, 1d, 2d))(_.toString))
   }
+
+  def filter[A](l: List[A])(f: A ⇒ Boolean): List[A] =
+    foldRight(l, Nil: List[A]) { (a, b) ⇒
+      if (f(a)) Cons(a, b)
+      else b
+    }
+
+  def testFilter(): Unit = {
+    assert(List() == filter(List())(_ == 1))
+    assert(List(1) == filter(List(1))(_ == 1))
+    assert(List() == filter(List(2))(_ == 1))
+    assert(List(1, 1) == filter(List(1, 2, 1, 2))(_ == 1))
+  }
 }
