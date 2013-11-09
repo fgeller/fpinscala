@@ -50,3 +50,52 @@ object Either {
     traverse(l)(e ⇒ e)
 
 }
+
+case class Person(name: Name, age: Age)
+sealed class Name(val value: String)
+sealed class Age(val value: Int)
+
+sealed trait Validation[+E, +A] extends Either[List[E], A] {
+
+  def map2[EE >: E, B, C](b: Validation[EE, B])(f: (A, B) ⇒ C): Validation[EE, C] =
+    (this, b) match {
+      case (Failure(f1), Failure(f2)) ⇒ Failure(f1 ++ f2)
+      case (_, f @ Failure(_))        ⇒ f
+      case (f @ Failure(_), _)        ⇒ f
+      case (Success(a), Success(b))   ⇒ Success(f(a, b))
+    }
+
+}
+object Validation {
+
+  def traverse[E, A, B](l: List[A])(f: A ⇒ Validation[E, B]): Validation[E, List[B]] =
+    l.foldRight(Success(Nil): Validation[E, List[B]]) {
+      (a, acc) ⇒
+        acc match {
+          case Failure(f1) ⇒
+            f(a) match {
+              case Failure(f2) ⇒ Failure(f1 ++ f2)
+              case _           ⇒ Failure(f1)
+            }
+          case Success(ls) ⇒
+            f(a) match {
+              case Success(s)        ⇒ Success(s :: ls)
+              case fail @ Failure(_) ⇒ fail
+            }
+        }
+    }
+
+}
+case class Failure[+E](get: List[E]) extends Validation[E, Nothing]
+case class Success[+A](get: A) extends Validation[Nothing, A]
+
+object Makers {
+  def mkName(name: String): Validation[String, Name] =
+    if (name == "" || name == null) Failure(List("Name is empty."))
+    else Success(new Name(name))
+  def mkAge(age: Int): Validation[String, Age] =
+    if (age < 0) Failure(List("Age is out of range."))
+    else Success(new Age(age))
+  def mkPerson(name: String, age: Int): Validation[String, Person] =
+    mkName(name).map2(mkAge(age))(Person(_, _))
+}
