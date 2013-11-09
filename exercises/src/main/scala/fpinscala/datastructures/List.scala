@@ -167,5 +167,36 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(concat(List(List(1, 3), List(2, 4))) == List(1, 3, 2, 4))
   }
 
-  def map[A, B](l: List[A])(f: A ⇒ B): List[B] = sys.error("todo")
+  def incrementList(l: List[Int]): List[Int] = l match {
+    case Nil        ⇒ Nil
+    case Cons(h, t) ⇒ Cons(h + 1, incrementList(t))
+  }
+
+  def testIncrementList(): Unit = {
+    assert(List() == incrementList(List()))
+    assert(List(1) == incrementList(List(0)))
+    assert(List(2) == incrementList(List(1)))
+    assert(List(2, 2, 3) == incrementList(List(1, 1, 2)))
+  }
+
+  def stringList(l: List[Double]): List[String] = l match {
+    case Nil        ⇒ Nil
+    case Cons(h, t) ⇒ Cons(h.toString, stringList(t))
+  }
+
+  def testStringList(): Unit = {
+    assert(List() == stringList(List()))
+    assert(List("1.0") == stringList(List(1.0d)))
+    assert(List("2.0") == stringList(List(2.0d)))
+    assert(List("1.0", "1.0", "2.0") == stringList(List(1d, 1d, 2d)))
+  }
+
+  def map[A, B](l: List[A])(f: A ⇒ B): List[B] = foldRight(l, Nil: List[B]) { (a, b) ⇒ Cons(f(a), b) }
+
+  def testMap(): Unit = {
+    assert(List() == map(List())(_.toString))
+    assert(List("1.0") == map(List(1.0d))(_.toString))
+    assert(List("2.0") == map(List(2.0d))(_.toString))
+    assert(List("1.0", "1.0", "2.0") == map(List(1d, 1d, 2d))(_.toString))
+  }
 }
