@@ -149,5 +149,14 @@ object List { // `List` companion object. Contains functions for creating and wo
   def foldRightR[A, B](l: List[A], z: B)(f: (A, B) ⇒ B) =
     (foldLeft(l, { id: B ⇒ id }) { (acc: B ⇒ B, a: A) ⇒ { b ⇒ f(a, acc(b)) } })(z)
 
+  def fappend[A](a1: List[A], a2: List[A]): List[A] =
+    foldRight(a1, a2)((a, b) ⇒ Cons(a, b))
+
+  def testAppend(): Unit = {
+    assert(append(List(), List()) == fappend(List(), List()))
+    assert(append(List(1), List(2)) == fappend(List(1), List(2)))
+    assert(append(List(1, 3), List(2, 4)) == fappend(List(1, 3), List(2, 4)))
+  }
+
   def map[A, B](l: List[A])(f: A ⇒ B): List[B] = sys.error("todo")
 }
