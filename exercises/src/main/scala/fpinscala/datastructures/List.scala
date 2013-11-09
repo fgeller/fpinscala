@@ -114,7 +114,17 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(3 == length(List(1, 2, 3)))
   }
 
-  def foldLeft[A, B](l: List[A], z: B)(f: (B, A) ⇒ B): B = sys.error("todo")
+  def foldLeft[A, B](l: List[A], z: B)(f: (B, A) ⇒ B): B = l match {
+    case Nil        ⇒ z
+    case Cons(h, t) ⇒ foldLeft(t, f(z, h))(f)
+  }
+
+  def testFoldLeft(): Unit = {
+    assert(foldRight(List(): List[Int], 0)((_, acc) ⇒ acc + 1) == foldLeft(List(): List[Int], 0)((acc, _) ⇒ acc + 1))
+    assert(foldRight(List(1), 0)((_, acc) ⇒ acc + 1) == foldLeft(List(1), 0)((acc, _) ⇒ acc + 1))
+    assert(foldRight(List(1), 0)((_, acc) ⇒ acc + 1) == foldLeft(List(1), 0)((acc, _) ⇒ acc + 1))
+    assert(foldRight(List(1, 2), 0)((_, acc) ⇒ acc + 1) == foldLeft(List(1, 2), 0)((acc, _) ⇒ acc + 1))
+  }
 
   def map[A, B](l: List[A])(f: A ⇒ B): List[B] = sys.error("todo")
 }
