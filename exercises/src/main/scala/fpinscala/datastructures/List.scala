@@ -249,4 +249,22 @@ object List { // `List` companion object. Contains functions for creating and wo
     assert(List() == addLists(List(), List()))
     assert(List(2, 4, 6) == addLists(List(1, 2, 3), List(1, 2, 3)))
   }
+
+  def hasSubsequence[A](l: List[A], sub: List[A]): Boolean = (l, sub) match {
+    case (Nil, Nil)        ⇒ true
+    case (Cons(_, _), Nil) ⇒ true
+    case (Nil, _)          ⇒ false
+    case (Cons(lh, lt), Cons(sh, st)) ⇒
+      if (lh == sh) hasSubsequence(lt, st) || hasSubsequence(lt, sub)
+      else hasSubsequence(lt, sub)
+  }
+
+  def testHasSubsequence(): Unit = {
+    assert(true == hasSubsequence(List(), List()))
+    assert(true == hasSubsequence(List(1), List()))
+    assert(false == hasSubsequence(List(), List(1)))
+    assert(false == hasSubsequence(List(1, 2), List(3)))
+    assert(true == hasSubsequence(List(1, 2), List(1, 2)))
+    assert(true == hasSubsequence(List(1, 3, 1, 2), List(1, 2)))
+  }
 }
