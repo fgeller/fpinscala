@@ -38,7 +38,15 @@ object RNG {
 
   }
 
-  def double(rng: RNG): (Double, RNG) = ???
+  def double(rng: RNG): (Double, RNG) = {
+
+    val (positiveRandomInt, nextRNG) = positiveInt(rng)
+    val randomDouble =
+      if (positiveRandomInt == Int.MaxValue) 0D
+      else positiveRandomInt / Int.MaxValue.toDouble
+
+    (randomDouble, nextRNG)
+  }
 
   def intDouble(rng: RNG): ((Int,Double), RNG) = ???
 
