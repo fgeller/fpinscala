@@ -28,7 +28,15 @@ object RNG {
       (f(a), rng2)
     }
 
-  def positiveInt(rng: RNG): (Int, RNG) = ???
+  def positiveInt(rng: RNG): (Int, RNG) = {
+    val (randomInt, nextRNG) = rng.nextInt
+    val positiveRandomInt =
+      if (randomInt == Int.MinValue) Int.MaxValue
+      else randomInt.abs
+
+    (positiveRandomInt, nextRNG)
+
+  }
 
   def double(rng: RNG): (Double, RNG) = ???
 
