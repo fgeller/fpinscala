@@ -35,29 +35,19 @@ object RNG {
       else randomInt.abs
 
     (positiveRandomInt, nextRNG)
-
   }
 
-  def double(rng: RNG): (Double, RNG) = {
-
-    val (positiveRandomInt, nextRNG) = positiveInt(rng)
-    val randomDouble =
+  def double: RNG ⇒ (Double, RNG) =
+    map(positiveInt) { positiveRandomInt ⇒
       if (positiveRandomInt == Int.MaxValue) 0D
       else positiveRandomInt / Int.MaxValue.toDouble
+    }
 
-    (randomDouble, nextRNG)
-  }
+  def intDouble: Rand[(Int,Double)] =
+    map2(int, double)((_, _))
 
-  def intDouble(rng: RNG): ((Int,Double), RNG) = {
-    val (randomInt, nextRNG1) = rng.nextInt
-    val (randomDouble, nextRNG2) = double(nextRNG1)
-    ((randomInt, randomDouble), nextRNG2)
-  }
-
-  def doubleInt(rng: RNG): ((Double,Int), RNG) = {
-    val ((randomInt, randomDouble), nextRNG) = intDouble(rng)
-    ((randomDouble, randomInt), nextRNG)
-  }
+  def doubleInt: Rand[(Double,Int)] =
+    map2(double, int)((_, _))
 
   def double3(rng: RNG): ((Double,Double,Double), RNG) = {
     val (randomDouble1, nextRNG1) = double(rng)
@@ -68,13 +58,17 @@ object RNG {
 
   def ints(count: Int)(rng: RNG): (List[Int], RNG) = ???
 
-  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = ???
+  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
+    rng ⇒ {
+      val (a, rng2) = ra(rng)
+      val (b, rng3) = rb(rng2)
+      (f(a,b), rng3)
+    }
 
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = ???
 
   def flatMap[A,B](f: Rand[A])(g: A => Rand[B]): Rand[B] = ???
 }
-
 case class State[S,+A](run: S => (A, S)) {
   def map[B](f: A => B): State[S, B] =
     sys.error("todo")
