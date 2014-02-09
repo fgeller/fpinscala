@@ -76,7 +76,20 @@ object RNG {
       }
     }
 
-  def flatMap[A,B](f: Rand[A])(g: A => Rand[B]): Rand[B] = ???
+  def flatMap[A,B](f: Rand[A])(g: A => Rand[B]): Rand[B] =
+    rng ⇒ {
+      val (a, nextRNG) = f(rng)
+      g(a)(nextRNG)
+    }
+
+  def positiveLessThan(upperLimit: Int): Rand[Int] =
+    flatMap(positiveInt) { positiveRandomInt ⇒
+      val mod = positiveRandomInt % upperLimit
+      if (positiveRandomInt + (upperLimit - 1) - mod > 0)
+        unit(mod)
+      else
+        positiveLessThan(upperLimit)
+    }
 }
 case class State[S,+A](run: S => (A, S)) {
   def map[B](f: A => B): State[S, B] =
