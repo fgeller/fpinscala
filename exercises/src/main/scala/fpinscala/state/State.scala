@@ -118,7 +118,37 @@ case class Machine(locked: Boolean, candies: Int, coins: Int)
 
 object State {
   type Rand[A] = State[RNG, A]
-  def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = ???
+
+  def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = {
+    for {
+      _ ← sequence(
+      inputs map { input ⇒
+        modify(
+          { machine: Machine ⇒
+            (input, machine) match {
+              case (_, Machine(_, 0, _)) ⇒ machine
+              case (Coin, Machine(locked, candies, coins)) if locked  ⇒ Machine(false, candies, coins + 1)
+              case (Turn, Machine(locked, candies, coins)) if !locked ⇒ Machine(true, candies - 1, coins)
+              case _ ⇒ machine
+            }
+          }
+        )
+      }
+      )
+      machine ← gets
+    } yield (machine.coins, machine.candies)
+  }
+
+  // Applicative.scala:120: reference to get is ambiguous;
+  def gets[S]: State[S, S] = State(s ⇒ (s, s))
+  // Applicative.scala:122: reference to set is ambiguous;
+  def sets[S](s: S): State[S, Unit] = State(_ ⇒ ((), s))
+
+  def modify[S](f: S ⇒ S): State[S, Unit] =
+    for {
+      s ← gets
+      _ ← sets(f(s))
+    } yield ()
 
 
   def sequence[S, A](fs: List[State[S, A]]): State[S, List[A]] =
